@@ -8,9 +8,7 @@ import (
 	"log"
 )
 
-type DatabaseMongo struct {
-	Connection *mongo.Client
-}
+type DatabaseMongo struct{}
 
 func (m *DatabaseMongo) GetConnection(ctx context.Context) *mongo.Client {
 	//ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
