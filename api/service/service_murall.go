@@ -8,9 +8,25 @@ import (
 )
 
 // An simplest way to cache the response
-var cache struct {
+type Cache struct {
 	status bool
 	data   interface{}
+}
+
+func (c *Cache) DisableCache() {
+	c.status = false
+	c.data = nil
+}
+
+func (c *Cache) EnableCache(data interface{}) {
+	c.status = true
+	c.data = data
+}
+
+var cache *Cache
+
+func init() {
+	cache = new(Cache)
 }
 
 func SaveMsg(msg string) (interface{}, error) {
@@ -25,7 +41,7 @@ func SaveMsg(msg string) (interface{}, error) {
 		return nil, err
 	}
 	log.Println("Message saved in the database")
-	cache.status = false
+	cache.DisableCache()
 	return res, nil
 }
 
@@ -47,8 +63,7 @@ func GetMsg() (interface{}, error) {
 	}
 
 	log.Println("Message got from the database")
-	cache.status = true
-	cache.data = res
+	cache.EnableCache(res)
 	log.Println("Data cached!")
 	return res, nil
 }
