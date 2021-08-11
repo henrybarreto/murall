@@ -9,6 +9,7 @@ import (
 
 func SaveMsg(msg string) (interface{}, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	database := new(database.DatabaseMongo)
 	connection := database.GetConnection(ctx)
 	defer database.CloseConnection(connection, ctx)
 	log.Println("Trying to save the message in the database")
@@ -23,6 +24,7 @@ func SaveMsg(msg string) (interface{}, error) {
 
 func GetMsg() (interface{}, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	database := new(database.DatabaseMongo)
 	connection := database.GetConnection(ctx)
 	defer database.CloseConnection(connection, ctx)
 

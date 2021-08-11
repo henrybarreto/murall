@@ -8,21 +8,11 @@ import (
 	"log"
 )
 
-type MongoDatabase struct {
+type DatabaseMongo struct {
 	Connection *mongo.Client
 }
 
-//var MongoConnection *mongo.Client
-
-//func init() {
-//	//TODO Fix it
-//	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-//	client, _ := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
-//
-//	MongoConnection = client
-//}
-
-func GetConnection(ctx context.Context) *mongo.Client {
+func (m *DatabaseMongo) GetConnection(ctx context.Context) *mongo.Client {
 	//ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	log.Println("Trying to connect to MongoDB")
 	connection, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
@@ -34,11 +24,11 @@ func GetConnection(ctx context.Context) *mongo.Client {
 	return connection
 }
 
-func CloseConnection(connection *mongo.Client, ctx context.Context) error {
+func (m *DatabaseMongo) CloseConnection(connection *mongo.Client, ctx context.Context) error {
 	return connection.Disconnect(ctx)
 }
 
-func SaveMsg(connection *mongo.Client, ctx context.Context, msg string) (interface{}, error) {
+func (m *DatabaseMongo) SaveMsg(connection *mongo.Client, ctx context.Context, msg string) (interface{}, error) {
 	collection := connection.Database("murall").Collection("posts")
 	res, err := collection.InsertOne(ctx, bson.D{{"msg", msg}})
 	if err != nil {
@@ -47,7 +37,7 @@ func SaveMsg(connection *mongo.Client, ctx context.Context, msg string) (interfa
 	log.Println("Message inserted in the database", res.InsertedID)
 	return res.InsertedID, err
 }
-func GetMsg(connection *mongo.Client, ctx context.Context) (interface{}, error) {
+func (m *DatabaseMongo) GetMsg(connection *mongo.Client, ctx context.Context) (interface{}, error) {
 	collection := connection.Database("murall").Collection("posts")
 	var data interface{}
 	//TODO Remove mocked value in the findOne
